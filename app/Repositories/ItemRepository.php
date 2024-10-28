@@ -2,13 +2,15 @@
 
 namespace App\Repositories;
 
+use Illuminate\Database\Eloquent\Collection;
+
 use App\Models\Item;
 
 class ItemRepository
 {
-    public function getAllItems(): array
+    public function getAllItems(): Collection
     {
-        return Item::all()->toArray();
+        return Item::all();
     }
 
     public function findByName(string $name): ?Item
