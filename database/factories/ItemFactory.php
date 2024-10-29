@@ -13,7 +13,7 @@ class ItemFactory extends Factory
     {
         return [
             'name' => $this->faker->randomElement([
-                'Apple AirPods', 'Apple iPad Air', 'Samsung Galaxy S23', 'Xiaomi Redmi Note 13', 'Normal Item'
+                'Apple AirPods', 'Apple iPad Air', 'Samsung Galaxy S23', 'Xiaomi Redmi Note 13', 'Normal Item', 'Custom Item', 'Another Item'
             ]),
             'quality' => $this->faker->numberBetween(0, 50),
             'sellIn' => $this->faker->numberBetween(-10, 20),
