@@ -2,8 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\Item;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
+use App\Models\Item;
 use Tests\TestCase;
 
 class ItemControllerTest extends TestCase
@@ -14,14 +15,12 @@ class ItemControllerTest extends TestCase
     {
         parent::setUp();
 
-
         $this->withHeaders([
             'Authorization' => 'Basic ' . base64_encode(env('BASIC_AUTH_USER') . ':' . env('BASIC_AUTH_PASSWORD')),
         ]);
     }
 
-    /** @test */
-    public function it_can_list_all_items()
+    public function testCanListAllItems()
     {
         Item::factory()->count(3)->create();
 
@@ -31,8 +30,7 @@ class ItemControllerTest extends TestCase
         $response->assertJsonCount(3);
     }
 
-    /** @test */
-    public function it_can_create_an_item()
+    public function testCanCreateAnItem()
     {
         $data = [
             'name' => 'Test Item',
@@ -48,8 +46,7 @@ class ItemControllerTest extends TestCase
         $this->assertDatabaseHas('items', $data);
     }
 
-    /** @test */
-    public function it_validates_input_when_creating_an_item()
+    public function testValidatesInputWhenCreatingAnItem()
     {
         $response = $this->postJson('/api/items', []);
 
@@ -57,8 +54,7 @@ class ItemControllerTest extends TestCase
         $response->assertJsonValidationErrors(['name', 'sellIn', 'quality']);
     }
 
-    /** @test */
-    public function it_can_show_an_item()
+    public function testCanShowAnItem()
     {
         $item = Item::factory()->create();
 
@@ -72,16 +68,14 @@ class ItemControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function it_returns_404_when_item_not_found()
+    public function testReturns404WhenItemNotFound()
     {
         $response = $this->getJson('/api/items/999');
 
         $response->assertStatus(404);
     }
 
-    /** @test */
-    public function it_can_update_an_item()
+    public function testCanUpdateAnItem()
     {
         $item = Item::factory()->create();
 
@@ -98,8 +92,7 @@ class ItemControllerTest extends TestCase
         $this->assertDatabaseHas('items', array_merge(['id' => $item->id], $updatedData));
     }
 
-    /** @test */
-    public function it_can_delete_an_item()
+    public function testCanDeleteAnItem()
     {
         $item = Item::factory()->create();
 
@@ -111,8 +104,7 @@ class ItemControllerTest extends TestCase
         $this->assertDatabaseMissing('items', ['id' => $item->id]);
     }
 
-    /** @test */
-    public function it_can_upload_an_image_for_an_item()
+    public function testCanUploadAnImageForAnItem()
     {
         $item = Item::factory()->create();
         $file = \Illuminate\Http\UploadedFile::fake()->image('item.jpg');
