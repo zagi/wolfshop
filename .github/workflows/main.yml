@@ -12,20 +12,6 @@ jobs:
   test-lint:
     runs-on: ubuntu-latest
 
-    services:
-      mysql:
-        image: mysql:8
-        env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: test_db
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -67,7 +53,7 @@ jobs:
         run: phpstan analyse --memory-limit=1G app/
 
       - name: Run PHP_CodeSniffer for linting
-        run: phpcs -q --report=checkstyle app/ | cs2pr
+        run: phpcs -q --report=checkstyle --standard=PSR12 app/ | cs2pr
 
   ### This is just an example of how we could autodeploy on main branch update
   deploy:
