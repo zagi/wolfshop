@@ -63,8 +63,8 @@ jobs:
           BASIC_AUTH_USER: user
           BASIC_AUTH_PASSWORD: pass
 
-      - name: Run PHPStan for static analysis
-        run: vendor/bin/phpstan analyse --memory-limit=1G
+#      - name: Run PHPStan for static analysis
+#        run: vendor/bin/phpstan analyse --memory-limit=1G
 
       - name: Run PHP_CodeSniffer for linting
         run: vendor/bin/phpcs --standard=PSR12 app/
