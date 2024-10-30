@@ -22,4 +22,3 @@ class BasicAuthMiddleware
         return $next($request);
     }
 }
-

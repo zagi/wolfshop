@@ -45,8 +45,7 @@ class UpdateInventoryCommand extends Command
         $itemsData = $response->json();
 
         foreach ($itemsData as $itemData) {
-
-            $item = Item::where('name','=', $itemData['name'])->first();
+            $item = Item::where('name', '=', $itemData['name'])->first();
 
             if ($item) {
                 $item->quality = min(50, $item->quality + $itemData['data']['quality']);
