@@ -34,7 +34,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          tools: composer, phpstan, php-cs-fixer
+          tools: composer, phpstan, php-cs-fixer, phpcs, cs2pr
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
@@ -67,7 +67,7 @@ jobs:
         run: phpstan analyse --memory-limit=1G app/
 
       - name: Run PHP_CodeSniffer for linting
-        run: phpcs --standard=PSR12 app/
+        run: phpcs -q --report=checkstyle app/ | cs2pr
 
   ### This is just an example of how we could autodeploy on main branch update
   deploy:
