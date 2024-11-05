@@ -4,6 +4,11 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
+
+use App\Jobs\UpdateInventoryJob;
+use App\Services\InventoryService;
+use App\Repositories\ItemRepository;
 
 class UpdateInventoryCommandTest extends TestCase
 {
@@ -18,7 +23,15 @@ class UpdateInventoryCommandTest extends TestCase
                 ])
         ]);
 
+        Queue::fake();
+
         $this->artisan('inventory:update')->assertExitCode(0);
+
+        Queue::assertPushed(UpdateInventoryJob::class, 1);
+
+        // We need to call Job synchronously so we can do assertions...
+        $job = (new UpdateInventoryJob((new InventoryService(new ItemRepository()))))->withFakeQueueInteractions();
+        $job->handle();
 
         $this->assertDatabaseHas('items', [
             'name' => 'Apple AirPods',
