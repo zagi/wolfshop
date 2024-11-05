@@ -2,7 +2,8 @@
 
 namespace App\Services\ItemStrategies;
 
-use App\Models\Item;
+use Illuminate\Support\Facades\Log;
+use App\DTO\ItemDTO;
 
 class ConfigurableItemStrategy implements ItemStrategy
 {
@@ -13,7 +14,7 @@ class ConfigurableItemStrategy implements ItemStrategy
         $this->config = config('item_rules');
     }
 
-    public function update(Item $item): void
+    public function update(ItemDTO $item): void
     {
         $rules = $this->config[$item->name] ?? $this->config['default'];
 
@@ -22,18 +23,26 @@ class ConfigurableItemStrategy implements ItemStrategy
             return;
         }
 
-        $this->updateQuality($item, $rules);
+        try {
+            $this->updateQuality($item, $rules);
+        } catch (\Exception $e) {
+            Log::error("Error updating item quality '{$item->name}': {$e->getMessage()}");
+        }
 
         if (!($rules['ignore_sellIn'] ?? false)) {
             $item->sellIn--;
         }
 
         if ($item->sellIn < 0) {
-            $this->applyExpirationRules($item, $rules);
+            try {
+                $this->applyExpirationRules($item, $rules);
+            } catch (\Exception $e) {
+                Log::error("Error applying item expiration rules '{$item->name}': {$e->getMessage()}");
+            }
         }
     }
 
-    protected function updateQuality(Item $item, array $rules): void
+    protected function updateQuality(ItemDTO $item, array $rules): void
     {
         $item->quality += $rules['quality_change'];
         if (isset($rules['sellIn_thresholds'])) {
@@ -47,7 +56,7 @@ class ConfigurableItemStrategy implements ItemStrategy
         $item->quality = max($rules['min_quality'] ?? 0, $item->quality);
     }
 
-    protected function applyExpirationRules(Item $item, array $rules): void
+    protected function applyExpirationRules(ItemDTO $item, array $rules): void
     {
         if (isset($rules['quality_on_expire'])) {
             if (is_int($rules['quality_on_expire'])) {
