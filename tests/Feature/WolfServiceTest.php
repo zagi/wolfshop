@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Item;
 use App\Repositories\ItemRepository;
+use App\Services\ItemStrategies\Factory\StrategyFactory;
 use App\Services\WolfService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,7 +18,7 @@ class WolfServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->wolfService = new WolfService(new ItemRepository());
+        $this->wolfService = new WolfService(new ItemRepository(), new StrategyFactory());
     }
 
     public function testNormalItemDegradesQuality()

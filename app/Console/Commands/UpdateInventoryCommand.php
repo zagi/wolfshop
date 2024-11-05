@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
-use App\Models\Item;
+use App\Jobs\UpdateInventoryJob;
+use App\Services\InventoryService;
 use App\Repositories\ItemRepository;
 
 class UpdateInventoryCommand extends Command
@@ -23,42 +23,13 @@ class UpdateInventoryCommand extends Command
      */
     protected $description = 'Update inventory from external API';
 
-    private ItemRepository $itemRepository;
-
-    public function __construct(ItemRepository $itemRepository)
-    {
-        parent::__construct();
-        $this->itemRepository = $itemRepository;
-    }
-
     /**
      * Execute the console command.
      */
     public function handle(): void
     {
-        $response = Http::get('https://api.restful-api.dev/objects');
+        UpdateInventoryJob::dispatch(new InventoryService(new ItemRepository()));
 
-        if ($response->failed()) {
-            $this->error('Failed to fetch data from the API.');
-        }
-
-        $itemsData = $response->json();
-
-        foreach ($itemsData as $itemData) {
-            $item = Item::where('name', '=', $itemData['name'])->first();
-
-            if ($item) {
-                $item->quality = min(50, $item->quality + $itemData['data']['quality']);
-            } else {
-                $item = new Item();
-                $item->name = $itemData['name'];
-                $item->quality = min(50, $itemData['data']['quality']);
-                $item->sellIn = $itemData['data']['sellIn'];
-            }
-
-            $this->itemRepository->save($item);
-        }
-
-        $this->info('Inventory updated successfully.');
+        $this->info('Inventory update process has been started.');
     }
 }

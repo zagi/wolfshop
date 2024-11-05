@@ -2,9 +2,9 @@
 
 namespace App\Services\ItemStrategies;
 
-use App\Models\Item;
+use App\DTO\ItemDTO;
 
 interface ItemStrategy
 {
-    public function update(Item $item): void;
+    public function update(ItemDTO $item): void;
 }

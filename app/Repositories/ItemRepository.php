@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Collection;
 use App\Models\Item;
+use App\DTO\ItemDTO;
 
 class ItemRepository
 {
@@ -30,5 +31,14 @@ class ItemRepository
     public function updateOrCreate(array $attributes, array $values): Item
     {
         return Item::updateOrCreate($attributes, $values);
+    }
+
+    public function saveDTO(ItemDTO $dto): void
+    {
+        $item = Item::where('name', $dto->name)->firstOrNew();
+        $item->quality = $dto->quality;
+        $item->sellIn = $dto->sellIn;
+        $item->imgUrl = $dto->getImgUrl();
+        $item->save();
     }
 }
