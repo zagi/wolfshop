@@ -3,18 +3,17 @@
 namespace App\Services;
 
 use App\Repositories\ItemRepository;
-use App\Services\ItemStrategies\ConfigurableItemStrategy;
+use App\Services\ItemStrategies\ItemStrategy;
 
 final class WolfService
 {
-    private ConfigurableItemStrategy $strategy;
-
+    private ItemStrategy $strategy;
     private ItemRepository $itemRepository;
 
-    public function __construct(ItemRepository $itemRepository)
+    public function __construct(ItemRepository $itemRepository, ItemStrategy $strategy)
     {
         $this->itemRepository = $itemRepository;
-        $this->strategy = new ConfigurableItemStrategy();
+        $this->strategy = $strategy;
     }
 
     public function updateQuality(): void
