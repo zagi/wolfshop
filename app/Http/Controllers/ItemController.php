@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -89,7 +89,7 @@ class ItemController extends Controller
         try {
             $item = Item::findOrFail($id);
 
-            $uploadedFileUrl = Cloudinary::upload($request->file('image')->getRealPath())->getSecurePath();
+            $uploadedFileUrl = Storage::disk('cloudinary')->putFile('images', $request->file('image'));
 
             $item->setImgUrl($uploadedFileUrl);
             $item->save();
